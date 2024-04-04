@@ -1,7 +1,6 @@
 Java Assignment
 
-You will develop a simple foreign exchange application which is one of the most
-common services used in financial applications. Requirements are as follows:
+You will develop a simple foreign exchange application which is one of the most common services used in financial applications. Requirements are as follows:
 Mandatory Functional Requirements:
 Exchange Rate Endpoint:
 • Input: A pair of currency codes (e.g., USD to EUR).

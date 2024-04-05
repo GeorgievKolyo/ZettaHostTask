@@ -8,7 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 
-@Primary
+//@Primary
 @Service
 public class FixerAPIClient implements ExchangeProvider {
 

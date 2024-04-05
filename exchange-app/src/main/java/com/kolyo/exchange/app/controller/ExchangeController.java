@@ -1,6 +1,7 @@
 package com.kolyo.exchange.app.controller;
 
 import com.kolyo.exchange.app.provider.ExchangeProvider;
+import com.kolyo.exchange.app.service.ExchangeService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -13,11 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 public class ExchangeController {
 
-    private ExchangeProvider exchangeProvider;
+
+    private ExchangeService exchangeService;
 
     @GetMapping("api/exchange-rate")
-    public ResponseEntity<ExchangeRateResponse> getExchangeRate(@RequestBody ExchangeRateRequest request) {
-        LatestRateDTO response = exchangeProvider.latestRate(request.getToCurrency(), request.getFromCurrency());
+    public ResponseEntity<ExchangeRateResponse> exchangeRate(@RequestBody ExchangeRateRequest request) {
+        LatestRateDTO response = exchangeService.exchangeRate(request.getToCurrency(), request.getFromCurrency());
 
         //TODO validate request
         //TODO add exception
@@ -35,9 +37,10 @@ public class ExchangeController {
 
     @GetMapping("api/convert")
     public ResponseEntity<CurrencyConversionResponse> currencyConversion(@RequestBody CurrencyConversionRequest request) {
-        ConvertDTO response = exchangeProvider.convert(request.getFrom(),request.getAmount(), request.getTo());
+        Transaction response = exchangeService.currencyConversion(request.getFrom(),request.getAmount(), request.getTo());
         System.out.println(response.toString());
         return ResponseEntity.ok(CurrencyConversionResponse.builder()
+                .id(response.getId())
                 .from(request.getFrom())
                 .amount(request.getAmount())
                 .to(request.getTo())

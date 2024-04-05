@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 @Builder
 public class CurrencyConversionResponse {
 
+    private Long id;
     private String from;
     private BigDecimal amount;
     private String to;

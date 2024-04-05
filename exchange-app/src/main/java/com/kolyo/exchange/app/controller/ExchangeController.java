@@ -29,4 +29,19 @@ public class ExchangeController {
             return ResponseEntity.notFound().build();
         }
     }
+
+
+    @GetMapping("api/convert")
+    public ResponseEntity<CurrencyConversionResponse> currencyConversion(@RequestBody CurrencyConversionRequest request) {
+        ConvertDTO response = fixerAPIClient.convert(request.getFrom(),request.getAmount(), request.getTo());
+        System.out.println(response.toString());
+        return ResponseEntity.ok(CurrencyConversionResponse.builder()
+                .from(request.getFrom())
+                .amount(request.getAmount())
+                .to(request.getTo())
+                .result(response.getResult())
+                .build());
+
+    }
+
 }

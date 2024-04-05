@@ -1,7 +1,7 @@
 package com.kolyo.exchange.app.provider;
 
-import com.kolyo.exchange.app.controller.ConvertDTO;
-import com.kolyo.exchange.app.controller.LatestRateDTO;
+import com.kolyo.exchange.app.dto.ConvertDTO;
+import com.kolyo.exchange.app.dto.LatestRateDTO;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;

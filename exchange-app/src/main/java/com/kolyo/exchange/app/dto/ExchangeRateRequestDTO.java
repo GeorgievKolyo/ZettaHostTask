@@ -1,9 +1,9 @@
-package com.kolyo.exchange.app.controller;
+package com.kolyo.exchange.app.dto;
 
 import lombok.Data;
 
 @Data
-public class ExchangeRateRequest {
+public class ExchangeRateRequestDTO {
 
     private String fromCurrency;
 

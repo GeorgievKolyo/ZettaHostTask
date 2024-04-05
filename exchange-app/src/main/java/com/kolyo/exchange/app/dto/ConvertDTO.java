@@ -1,4 +1,4 @@
-package com.kolyo.exchange.app.controller;
+package com.kolyo.exchange.app.dto;
 
 import lombok.Data;
 import lombok.ToString;
@@ -9,12 +9,14 @@ import java.util.Map;
 
 @Data
 @ToString
-public class LatestRateDTO {
+public class ConvertDTO {
 
     private boolean success;
-    private Long timestamp;
-    private String base;
-    private Date date;
-    private Map<String, BigDecimal> rates;
 
+    private Map<String, String> query;
+    private Map<String, String> info;
+
+    private Date date;
+
+    private BigDecimal result;
 }

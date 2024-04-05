@@ -1,4 +1,4 @@
-package com.kolyo.exchange.app.controller;
+package com.kolyo.exchange.app.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

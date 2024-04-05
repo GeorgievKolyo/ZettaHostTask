@@ -1,4 +1,4 @@
-package com.kolyo.exchange.app.controller;
+package com.kolyo.exchange.app.dto;
 
 import lombok.Builder;
 import lombok.Data;
@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 
 @Data
 @Builder
-public class CurrencyConversionResponse {
+public class CurrencyConversionResponseDTO {
 
     private Long id;
     private String from;

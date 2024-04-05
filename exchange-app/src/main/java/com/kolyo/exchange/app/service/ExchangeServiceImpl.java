@@ -1,7 +1,10 @@
 package com.kolyo.exchange.app.service;
 
-import com.kolyo.exchange.app.controller.*;
+import com.kolyo.exchange.app.dto.ConvertDTO;
+import com.kolyo.exchange.app.dto.LatestRateDTO;
+import com.kolyo.exchange.app.model.Transaction;
 import com.kolyo.exchange.app.provider.ExchangeProvider;
+import com.kolyo.exchange.app.repository.TransactionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

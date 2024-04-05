@@ -1,8 +1,7 @@
 package com.kolyo.exchange.app.provider;
 
-import com.kolyo.exchange.app.controller.ConvertDTO;
-import com.kolyo.exchange.app.controller.LatestRateDTO;
-import org.springframework.context.annotation.Primary;
+import com.kolyo.exchange.app.dto.ConvertDTO;
+import com.kolyo.exchange.app.dto.LatestRateDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 

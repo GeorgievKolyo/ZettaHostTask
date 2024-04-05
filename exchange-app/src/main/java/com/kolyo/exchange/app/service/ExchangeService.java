@@ -1,9 +1,7 @@
 package com.kolyo.exchange.app.service;
 
-import com.kolyo.exchange.app.controller.ConvertDTO;
-import com.kolyo.exchange.app.controller.CurrencyConversionResponse;
-import com.kolyo.exchange.app.controller.LatestRateDTO;
-import com.kolyo.exchange.app.controller.Transaction;
+import com.kolyo.exchange.app.dto.LatestRateDTO;
+import com.kolyo.exchange.app.model.Transaction;
 
 import java.math.BigDecimal;
 

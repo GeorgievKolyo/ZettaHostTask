@@ -7,9 +7,10 @@ import com.kolyo.exchange.app.service.ExchangeService;
 import com.kolyo.exchange.app.util.Validator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -18,7 +19,7 @@ public class ExchangeController {
 
     private ExchangeService exchangeService;
 
-    @GetMapping("api/exchange-rate")
+    @GetMapping("/api/exchange-rate")
     public ResponseEntity<ExchangeRateResponseDTO> exchangeRate(@RequestBody ExchangeRateRequestDTO request) {
         Validator.validCurrency(request.getToCurrency());
         Validator.validCurrency(request.getFromCurrency());
@@ -37,7 +38,7 @@ public class ExchangeController {
     }
 
 
-    @GetMapping("api/convert")
+    @GetMapping("/api/convert")
     public ResponseEntity<CurrencyConversionResponseDTO> currencyConversion(@RequestBody CurrencyConversionRequestDTO request) {
         Validator.validCurrency(request.getFrom());
         Validator.validCurrency(request.getTo());
@@ -52,6 +53,24 @@ public class ExchangeController {
                 .result(response.getResult())
                 .build());
 
+    }
+
+    @GetMapping("/api/get/transaction")
+    public ResponseEntity<TransactionResponseDTO> findTransactionById(@RequestBody TransactionRequestDTO request) {
+        Optional<Transaction> transaction = exchangeService.findTransactionById(request.getTransactionId());
+
+        if (transaction.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Transaction response = transaction.get();
+        return ResponseEntity.ok(TransactionResponseDTO.builder()
+                .id(response.getId())
+                .date(response.getDate())
+                .fromCurrency(response.getFromCurrency())
+                .amount(response.getAmount())
+                .toCurrency(response.getToCurrency())
+                .result(response.getResult())
+                .build());
     }
 
 }

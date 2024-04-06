@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -42,5 +43,10 @@ public class ExchangeServiceImpl implements ExchangeService {
         repository.save(transaction);
 
         return transaction;
+    }
+
+    @Override
+    public Optional<Transaction> findTransactionById(Long transactionId) {
+        return repository.findById(transactionId);
     }
 }

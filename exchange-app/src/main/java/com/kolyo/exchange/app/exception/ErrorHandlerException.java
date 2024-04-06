@@ -17,4 +17,12 @@ public class ErrorHandlerException extends ResponseEntityExceptionHandler {
         errorDTO.setStatus(HttpStatus.NOT_ACCEPTABLE.value());
         return new ResponseEntity<>(errorDTO,HttpStatus.NOT_ACCEPTABLE );
     }
+
+    @ExceptionHandler(value = {InvalidCurrencyException.class})
+    protected ResponseEntity<ErrorDTO> handleBadRequest(InvalidCurrencyException ex) {
+        ErrorDTO errorDTO = new ErrorDTO();
+        errorDTO.setMessage("Invalid currency: " + ex.getMessage());
+        errorDTO.setStatus(HttpStatus.BAD_REQUEST.value());
+        return new ResponseEntity<>(errorDTO,HttpStatus.BAD_REQUEST );
+    }
 }

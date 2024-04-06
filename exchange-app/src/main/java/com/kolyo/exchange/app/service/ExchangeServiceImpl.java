@@ -2,10 +2,12 @@ package com.kolyo.exchange.app.service;
 
 import com.kolyo.exchange.app.dto.ConvertDTO;
 import com.kolyo.exchange.app.dto.LatestRateDTO;
+import com.kolyo.exchange.app.exception.InvalidCurrencyException;
 import com.kolyo.exchange.app.exception.InvalidDataException;
 import com.kolyo.exchange.app.model.Transaction;
 import com.kolyo.exchange.app.provider.ExchangeProvider;
 import com.kolyo.exchange.app.repository.TransactionRepository;
+import com.kolyo.exchange.app.util.Validator;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -5,6 +5,8 @@ import com.kolyo.exchange.app.model.Transaction;
 import org.springframework.expression.spel.ast.OpAnd;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 public interface ExchangeService {
@@ -14,4 +16,6 @@ public interface ExchangeService {
     Transaction currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency);
 
     Optional<Transaction> findTransactionById(Long transactionId);
+
+    List<Transaction> getAllTransactionsByDate(Date date);
 }

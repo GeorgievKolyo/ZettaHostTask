@@ -1,7 +1,7 @@
 package com.kolyo.exchange.app.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kolyo.exchange.app.dto.*;
-import com.kolyo.exchange.app.exception.InvalidCurrencyException;
 import com.kolyo.exchange.app.model.Transaction;
 import com.kolyo.exchange.app.service.ExchangeService;
 import com.kolyo.exchange.app.util.Validator;
@@ -9,15 +9,18 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
 public class ExchangeController {
 
-
     private ExchangeService exchangeService;
+
+    private ObjectMapper objectMapper;
 
     @GetMapping("/api/exchange-rate")
     public ResponseEntity<ExchangeRateResponseDTO> exchangeRate(@RequestBody ExchangeRateRequestDTO request) {
@@ -72,5 +75,16 @@ public class ExchangeController {
                 .result(response.getResult())
                 .build());
     }
+
+    @GetMapping("/api/all-from-date")
+    public ResponseEntity<List<TransactionResponseDTO>> findAllByDate(@RequestBody TransactionsByDateRequestDTO request) {
+        List<Transaction> transactions = exchangeService.getAllTransactionsByDate(request.getDate());
+
+        List<TransactionResponseDTO> response =  transactions.stream().map(e -> objectMapper.convertValue(e, TransactionResponseDTO.class))
+                .toList();
+
+        return ResponseEntity.ok(response);
+    }
+
 
 }

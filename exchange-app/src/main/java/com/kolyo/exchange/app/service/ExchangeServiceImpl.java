@@ -12,6 +12,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -48,5 +50,10 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Override
     public Optional<Transaction> findTransactionById(Long transactionId) {
         return repository.findById(transactionId);
+    }
+
+    @Override
+    public List<Transaction> getAllTransactionsByDate(Date date) {
+        return repository.findAllByDate(date);
     }
 }

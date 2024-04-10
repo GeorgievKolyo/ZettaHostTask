@@ -1,9 +1,6 @@
 package com.kolyo.exchange.app.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kolyo.exchange.app.dto.ConvertDTO;
 import com.kolyo.exchange.app.dto.LatestRateDTO;
-import com.kolyo.exchange.app.exception.InvalidDataException;
 import com.kolyo.exchange.app.model.RateEntity;
 import com.kolyo.exchange.app.model.TransactionEntity;
 import com.kolyo.exchange.app.provider.ExchangeProvider;
@@ -15,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +23,6 @@ public class ExchangeServiceImpl implements ExchangeService {
     private ExchangeProvider exchangeProvider;
     private TransactionRepository transactionRepository;
     private RateRepository rateRepository;
-    private ObjectMapper objectMapper;
 
     @Override
     public RateEntity exchangeRate(String fromCurrency, String toCurrency) {
@@ -58,7 +53,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 //        ConvertDTO convertDTO = exchangeProvider.convert(fromCurrency, amount, toCurrency);
 
         RateEntity rate = exchangeRate(fromCurrency,toCurrency);
-        BigDecimal convertedAmount = BigDecimal.valueOf(rate.getRate()).multiply(amount);
+        BigDecimal convertedAmount = rate.getRate().multiply(amount);
 
         TransactionEntity transactionEntity = TransactionEntity.builder()
                 .date(LocalDate.now())

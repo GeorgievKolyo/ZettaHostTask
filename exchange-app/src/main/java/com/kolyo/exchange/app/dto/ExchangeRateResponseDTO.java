@@ -3,6 +3,8 @@ package com.kolyo.exchange.app.dto;
 import lombok.Builder;
 import lombok.Data;
 
+import java.math.BigDecimal;
+
 @Data
 @Builder
 public class ExchangeRateResponseDTO {
@@ -11,5 +13,5 @@ public class ExchangeRateResponseDTO {
 
     private String toCurrency;
 
-    private Double rates;
+    private BigDecimal rates;
 }

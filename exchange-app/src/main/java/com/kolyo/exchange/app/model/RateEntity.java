@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Date;
 
@@ -32,5 +33,5 @@ public class RateEntity {
     private String toCurrency;
 
     @Column(name = "'rate'")
-    private Double rate;
+    private BigDecimal rate;
 }

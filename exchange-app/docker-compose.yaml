@@ -1,0 +1,12 @@
+version: '2.24.6'
+services:
+  exchange-app:
+    image: exchange-app
+    container_name: exchange-app
+    hostname: exchange-app
+    restart: always
+    ports:
+      - "8081:8081"
+volumes:
+  data:
+    driver: local

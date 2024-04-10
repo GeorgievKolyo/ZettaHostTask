@@ -15,13 +15,13 @@ public class Validator {
         if (isNull(currency)) {
             throw new InvalidCurrencyException("Currency is null");
         }
-        if (Arrays.stream(CurrencyEnum.values()).noneMatch(e -> e.equals(CurrencyEnum.convert(currency)))) {
+        if (Arrays.stream(CurrencyEnum.values()).noneMatch(e -> e.toString().equals(currency))) {
             throw new InvalidCurrencyException("Invalid currency: " + currency);
         }
     }
 
     public static void validAmount(BigDecimal amount) {
-        if (isNull(amount) || amount.compareTo(BigDecimal.ZERO) < 0) {
+        if (isNull(amount) || amount.compareTo(BigDecimal.ZERO) <= 0) {
             throw new InvalidDataException("The amount is invalid!");
         }
     }

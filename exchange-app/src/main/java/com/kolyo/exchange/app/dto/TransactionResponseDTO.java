@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -16,7 +17,7 @@ public class TransactionResponseDTO {
 
     private Long id;
 
-    private Date date;
+    private LocalDate date;
 
     private String fromCurrency;
 

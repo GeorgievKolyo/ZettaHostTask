@@ -8,7 +8,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
 
-@Primary
+//@Primary
 @Service
 public class CurrencyBeaconAPIClient implements ExchangeProvider {
 
@@ -25,7 +25,7 @@ public class CurrencyBeaconAPIClient implements ExchangeProvider {
         return restTemplate.getForObject(builder.toUriString(), LatestRateDTO.class);    }
 
     @Override
-    public ConvertDTO convert(String from, BigDecimal amount, String to) {
+    public ConvertDTO convert(String from, Double amount, String to) {
         System.out.println("CurrencyBeacon api");
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("https://api.currencybeacon.com/v1/convert")

@@ -15,6 +15,6 @@ public class LatestRateDTO {
     private Long timestamp;
     private String base;
     private Date date;
-    private Map<String, BigDecimal> rates;
+    private Map<String, Double> rates;
 
 }

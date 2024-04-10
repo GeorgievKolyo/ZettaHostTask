@@ -1,38 +1,28 @@
 package com.kolyo.exchange.app.util;
 
 import com.kolyo.exchange.app.exception.InvalidCurrencyException;
+import com.kolyo.exchange.app.exception.InvalidDataException;
+import com.kolyo.exchange.app.model.CurrencyEnum;
 
-import java.util.Currency;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import java.math.BigDecimal;
+import java.util.*;
+
+import static java.util.Objects.isNull;
 
 public class Validator {
 
     public static void validCurrency(String currency) {
-        if (!getAllCurrencies().stream().anyMatch(e -> e.getCurrencyCode().equals(currency))) {
-            throw new InvalidCurrencyException(currency + " is not valid!");
+        if (isNull(currency)) {
+            throw new InvalidCurrencyException("Currency is null");
+        }
+        if (Arrays.stream(CurrencyEnum.values()).noneMatch(e -> e.equals(CurrencyEnum.convert(currency)))) {
+            throw new InvalidCurrencyException("Invalid currency: " + currency);
         }
     }
 
-    public static Set<Currency> getAllCurrencies()
-    {
-        Set<Currency> toret = new HashSet<>();
-        Locale[] locs = Locale.getAvailableLocales();
-
-        for(Locale loc : locs) {
-            try {
-                Currency currency = Currency.getInstance( loc );
-
-                if ( currency != null ) {
-                    toret.add( currency );
-                }
-            } catch(Exception exc)
-            {
-
-            }
+    public static void validAmount(BigDecimal amount) {
+        if (isNull(amount) || amount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new InvalidDataException("The amount is invalid!");
         }
-
-        return toret;
     }
 }

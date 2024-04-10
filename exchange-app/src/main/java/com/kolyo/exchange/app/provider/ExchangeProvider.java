@@ -12,5 +12,5 @@ public interface ExchangeProvider {
 
     LatestRateDTO latestRate(String base, String symbols);
 
-    ConvertDTO convert(String from, BigDecimal amount, String to);
+    ConvertDTO convert(String from, Double amount, String to);
 }

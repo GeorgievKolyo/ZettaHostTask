@@ -1,21 +1,20 @@
 package com.kolyo.exchange.app.service;
 
-import com.kolyo.exchange.app.dto.LatestRateDTO;
-import com.kolyo.exchange.app.model.Transaction;
-import org.springframework.expression.spel.ast.OpAnd;
+import com.kolyo.exchange.app.model.RateEntity;
+import com.kolyo.exchange.app.model.TransactionEntity;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface ExchangeService {
 
-    LatestRateDTO exchangeRate(String fromCurrency, String toCurrency);
+    RateEntity exchangeRate(String fromCurrency, String toCurrency);
 
-    Transaction currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency);
+    TransactionEntity currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency);
 
-    Optional<Transaction> findTransactionById(Long transactionId);
+    Optional<TransactionEntity> findTransactionById(Long transactionId);
 
-    List<Transaction> getAllTransactionsByDate(Date date);
+    List<TransactionEntity> getAllTransactionsByDate(LocalDate date);
 }

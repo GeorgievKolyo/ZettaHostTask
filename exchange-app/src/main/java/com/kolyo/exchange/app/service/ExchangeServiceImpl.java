@@ -1,59 +1,85 @@
 package com.kolyo.exchange.app.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kolyo.exchange.app.dto.ConvertDTO;
 import com.kolyo.exchange.app.dto.LatestRateDTO;
-import com.kolyo.exchange.app.exception.InvalidCurrencyException;
 import com.kolyo.exchange.app.exception.InvalidDataException;
-import com.kolyo.exchange.app.model.Transaction;
+import com.kolyo.exchange.app.model.RateEntity;
+import com.kolyo.exchange.app.model.TransactionEntity;
 import com.kolyo.exchange.app.provider.ExchangeProvider;
+import com.kolyo.exchange.app.repository.RateRepository;
 import com.kolyo.exchange.app.repository.TransactionRepository;
-import com.kolyo.exchange.app.util.Validator;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ExchangeServiceImpl implements ExchangeService {
 
     private ExchangeProvider exchangeProvider;
-    private TransactionRepository repository;
+    private TransactionRepository transactionRepository;
+    private RateRepository rateRepository;
+    private ObjectMapper objectMapper;
 
     @Override
-    public LatestRateDTO exchangeRate(String fromCurrency, String toCurrency) {
-        return exchangeProvider.latestRate(toCurrency, fromCurrency);
+    public RateEntity exchangeRate(String fromCurrency, String toCurrency) {
+
+        Optional<RateEntity> rateEntity = rateRepository
+                .findRateEntitiesByDateAndFromCurrencyAndToCurrency(LocalDate.now(), fromCurrency, toCurrency);
+
+        if (rateEntity.isPresent()) {
+            log.info("Rte from DB");
+            return rateEntity.get();
+        }
+        LatestRateDTO latestRateDTO = exchangeProvider.latestRate(fromCurrency, toCurrency);
+
+        if (!latestRateDTO.isSuccess()) {
+            throw new RuntimeException("rest problem");
+        }
+        RateEntity result = RateEntity.builder()
+                .fromCurrency(fromCurrency)
+                .toCurrency(toCurrency)
+                .date(LocalDate.now())
+                .rate(latestRateDTO.getRates().get(toCurrency))
+                .build();
+        return rateRepository.save(result);
     }
 
     @Override
-    public Transaction currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency) {
-        ConvertDTO convertDTO = exchangeProvider.convert(fromCurrency, amount, toCurrency);
+    public TransactionEntity currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency) {
+//        ConvertDTO convertDTO = exchangeProvider.convert(fromCurrency, amount, toCurrency);
 
-        if (convertDTO.getResult() == null) {
-            throw new InvalidDataException("Missing result!");
-        }
-        Transaction transaction = Transaction.builder()
-                .date(convertDTO.getDate())
+        RateEntity rate = exchangeRate(fromCurrency,toCurrency);
+        BigDecimal convertedAmount = BigDecimal.valueOf(rate.getRate()).multiply(amount);
+
+        TransactionEntity transactionEntity = TransactionEntity.builder()
+                .date(LocalDate.now())
                 .fromCurrency(fromCurrency)
                 .amount(amount)
                 .toCurrency(toCurrency)
-                .result(convertDTO.getResult())
+                .result(convertedAmount)
                 .build();
-        repository.save(transaction);
+        transactionRepository.save(transactionEntity);
 
-        return transaction;
+        return transactionEntity;
     }
 
     @Override
-    public Optional<Transaction> findTransactionById(Long transactionId) {
-        return repository.findById(transactionId);
+    public Optional<TransactionEntity> findTransactionById(Long transactionId) {
+        return transactionRepository.findById(transactionId);
     }
 
     @Override
-    public List<Transaction> getAllTransactionsByDate(Date date) {
-        return repository.findAllByDate(date);
+    public List<TransactionEntity> getAllTransactionsByDate(LocalDate date) {
+        return transactionRepository.findAllByDate(date);
     }
+
 }

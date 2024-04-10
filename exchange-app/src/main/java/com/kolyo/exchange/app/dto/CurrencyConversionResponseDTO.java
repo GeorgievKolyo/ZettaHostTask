@@ -10,8 +10,11 @@ import java.math.BigDecimal;
 public class CurrencyConversionResponseDTO {
 
     private Long id;
+
     private String from;
+
     private BigDecimal amount;
+
     private String to;
 
     private BigDecimal result;

@@ -3,8 +3,7 @@ package com.kolyo.exchange.app.dto;
 import lombok.Data;
 import lombok.ToString;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Map;
 
 @Data
@@ -14,9 +13,10 @@ public class ConvertDTO {
     private boolean success;
 
     private Map<String, String> query;
+
     private Map<String, String> info;
 
-    private Date date;
+    private LocalDate date;
 
-    private BigDecimal result;
+    private Double result;
 }

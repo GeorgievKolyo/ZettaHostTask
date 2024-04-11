@@ -1,3 +1,5 @@
+Swagger http://localhost:8080/swagger-ui/index.html
+
 Java Assignment
 
 You will develop a simple foreign exchange application which is one of the most common services used in financial applications. Requirements are as follows:<br />

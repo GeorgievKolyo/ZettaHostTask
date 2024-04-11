@@ -2,10 +2,13 @@ package com.kolyo.exchange.app.service;
 
 import com.kolyo.exchange.app.dto.ExchangeRateResponseDTO;
 import com.kolyo.exchange.app.dto.LatestRateDTO;
+import com.kolyo.exchange.app.dto.TransactionResponseDTO;
 import com.kolyo.exchange.app.exception.ExchangeNotFoundException;
 import com.kolyo.exchange.app.model.RateEntity;
+import com.kolyo.exchange.app.model.TransactionEntity;
 import com.kolyo.exchange.app.provider.ExchangeProvider;
 import com.kolyo.exchange.app.repository.RateRepository;
+import com.kolyo.exchange.app.repository.TransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -33,14 +36,18 @@ public class ExchangeServiceTest {
     private RateRepository rateRepository;
 
     @Mock
+    private TransactionRepository transactionRepository;
+
+    @Mock
     private RestTemplate restTemplate;
 
     @Mock
     private ExchangeProvider exchangeProvider;
 
     @InjectMocks
-    private ExchangeServiceImpl rateService;
+    private ExchangeServiceImpl exchangeService;
 
+    //exchange rate
     @Test
     void when_exchangeRate_return_rate_from_api() {
         // Mocked data
@@ -85,7 +92,7 @@ public class ExchangeServiceTest {
         when(rateRepository.save(any(RateEntity.class))).thenReturn(mockedRateEntity);
 
         // Call the method
-        RateEntity result = rateService.exchangeRate(fromCurrency, toCurrency);
+        RateEntity result = exchangeService.exchangeRate(fromCurrency, toCurrency);
 
         // Verify the result
         assertThat(result.getFromCurrency()).isEqualTo(expected.getFromCurrency());
@@ -130,7 +137,7 @@ public class ExchangeServiceTest {
                 .thenReturn(Optional.of(mockedRateEntity));
 
         // Call the method
-        RateEntity result = rateService.exchangeRate(fromCurrency, toCurrency);
+        RateEntity result = exchangeService.exchangeRate(fromCurrency, toCurrency);
 
         // Verify the result
         assertThat(result.getFromCurrency()).isEqualTo(expected.getFromCurrency());
@@ -193,10 +200,71 @@ public class ExchangeServiceTest {
         // Verify the result
         assertThat(mockedLatestRateDTO.isSuccess()).isEqualTo(false);
 
-        assertThatThrownBy(() -> rateService.exchangeRate(fromCurrency, toCurrency))
+        assertThatThrownBy(() -> exchangeService.exchangeRate(fromCurrency, toCurrency))
                 .isInstanceOf(ExchangeNotFoundException.class)
                 .hasMessage("rest problem");
 
 
     }
+
+    //convert
+    @Test
+    void when_currencyConversion_return_transactionResponseDTO() {
+
+        // Mocked data
+        String fromCurrency = "EUR";
+        String toCurrency = "GBP";
+        BigDecimal amount = new BigDecimal(100);
+
+        // Mocked RateEntity
+        RateEntity mockedRateEntity = RateEntity.builder()
+                .fromCurrency(fromCurrency)
+                .toCurrency(toCurrency)
+                .date(LocalDate.now())
+                .rate(BigDecimal.valueOf(0.856859))
+                .build();
+
+        BigDecimal convertedAmount = mockedRateEntity.getRate().multiply(amount);
+
+        TransactionEntity transactionEntity = TransactionEntity.builder()
+                .date(LocalDate.now())
+                .fromCurrency(fromCurrency)
+                .amount(amount)
+                .toCurrency(toCurrency)
+                .result(convertedAmount)
+                .build();
+
+        // Mock API response
+        TransactionResponseDTO expected = TransactionResponseDTO.builder()
+                .id(transactionEntity.getId())
+                .date(transactionEntity.getDate())
+                .fromCurrency(transactionEntity.getFromCurrency())
+                .amount(transactionEntity.getAmount())
+                .toCurrency(transactionEntity.getToCurrency())
+                .result(transactionEntity.getResult())
+                .build();
+
+        //Mock repository behavior
+        when(rateRepository.findRateEntitiesByDateAndFromCurrencyAndToCurrency(LocalDate.now(), fromCurrency, toCurrency)).thenReturn(Optional.of(mockedRateEntity));
+
+        // Call the method
+        TransactionResponseDTO result = exchangeService.currencyConversion(fromCurrency, amount, toCurrency);
+
+        // Verify the result
+        assertThat(result.getId()).isEqualTo(expected.getId());
+        assertThat(result.getDate()).isEqualTo(expected.getDate());
+        assertThat(result.getFromCurrency()).isEqualTo(expected.getFromCurrency());
+        assertThat(result.getAmount()).isEqualTo(expected.getAmount());
+        assertThat(result.getToCurrency()).isEqualTo(expected.getToCurrency());
+        assertThat(result.getResult()).isEqualTo(expected.getResult());
+
+        // Verify repository method was called
+        verify(rateRepository, times(1))
+                .findRateEntitiesByDateAndFromCurrencyAndToCurrency(LocalDate.now(), fromCurrency, toCurrency);
+
+        verify(exchangeProvider, times(0)).latestRate(fromCurrency, toCurrency);
+
+    }
+
+
 }

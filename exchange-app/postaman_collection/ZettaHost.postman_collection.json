@@ -1,0 +1,138 @@
+{
+	"info": {
+		"_postman_id": "d5a402bc-5876-4a74-9acc-e3c648b5dff5",
+		"name": "ZettaHost",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19564006",
+		"_collection_link": "https://instagramittalents.postman.co/workspace/Team-Workspace~c028982f-be2d-41a2-8581-be59b5195f42/collection/19564006-d5a402bc-5876-4a74-9acc-e3c648b5dff5?action=share&source=collection_link&creator=19564006"
+	},
+	"item": [
+		{
+			"name": "Get Exchange Rate",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/exchange-rate?fromCurrency=EUR&toCurrency=GBP",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"exchange-rate"
+					],
+					"query": [
+						{
+							"key": "fromCurrency",
+							"value": "EUR"
+						},
+						{
+							"key": "toCurrency",
+							"value": "GBP"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Convert",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"from\" : \"GBP\",\r\n    \"amount\" : 25,\r\n    \"to\" : \"EUR\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/convert",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"convert"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get transaction by Id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"transactionId\" : 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/get/transaction",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"get",
+						"transaction"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all transactions by date",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"date\": \"2024-04-10\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/all-from-date",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"all-from-date"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

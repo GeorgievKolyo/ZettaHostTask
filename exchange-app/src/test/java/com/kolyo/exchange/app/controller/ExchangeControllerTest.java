@@ -1,10 +1,7 @@
 package com.kolyo.exchange.app.controller;
 
-import com.kolyo.exchange.app.dto.CurrencyConversionResponseDTO;
-import com.kolyo.exchange.app.dto.TransactionResponseDTO;
 import com.kolyo.exchange.app.exception.InvalidCurrencyException;
 import com.kolyo.exchange.app.model.RateEntity;
-import com.kolyo.exchange.app.model.TransactionEntity;
 import com.kolyo.exchange.app.service.ExchangeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

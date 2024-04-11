@@ -1,4 +1,6 @@
 FROM openjdk:17
-ARG JAR_FILE=build/libs/exchange-app-0.0.1-SNAPSHOT.jar
-COPY ${JAR_FILE} exchange-app.jar
-ENTRYPOINT ["java","-jar", "/exchange-app.jar"]
+VOLUME /tmp
+EXPOSE 8080
+ARG JAR_FILE
+COPY ${JAR_FILE} exchangeapp.jar
+ENTRYPOINT ["java","-jar","/app.jar"]

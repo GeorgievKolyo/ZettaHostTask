@@ -2,6 +2,7 @@ package com.kolyo.exchange.app.service;
 
 import com.kolyo.exchange.app.dto.ExchangeRateResponseDTO;
 import com.kolyo.exchange.app.dto.LatestRateDTO;
+import com.kolyo.exchange.app.exception.ExchangeNotFoundException;
 import com.kolyo.exchange.app.model.RateEntity;
 import com.kolyo.exchange.app.provider.ExchangeProvider;
 import com.kolyo.exchange.app.repository.RateRepository;
@@ -22,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -146,5 +148,55 @@ public class ExchangeServiceTest {
                 any(HttpEntity.class),
                 eq(ExchangeRateResponseDTO.class)
         );
+    }
+
+    @Test
+    void when_exchangeRate_return_api_exception() {
+        // Mocked data
+        String fromCurrency = "EUR";
+        String toCurrency = "GBP";
+        Map<String, BigDecimal> rates = new HashMap<>();
+        rates.put(toCurrency, new BigDecimal("0.856859"));
+
+        // Mocked RateEntity
+        RateEntity mockedRateEntity = RateEntity.builder()
+                .fromCurrency(fromCurrency)
+                .toCurrency(toCurrency)
+                .date(LocalDate.now())
+                .rate(BigDecimal.valueOf(0.856859))
+                .build();
+
+        RateEntity expected = RateEntity.builder()
+                .id(mockedRateEntity.getId())
+                .fromCurrency(mockedRateEntity.getFromCurrency())
+                .toCurrency(mockedRateEntity.getToCurrency())
+                .date(mockedRateEntity.getDate())
+                .rate(mockedRateEntity.getRate())
+                .build();
+
+        // Mock API response
+        LatestRateDTO mockedLatestRateDTO = LatestRateDTO.builder()
+                .success(false)
+                .timestamp(23121323L)
+                .base(fromCurrency)
+                .rates(rates)
+                .date(new Date())
+                .build();
+
+        // Mock repository behavior
+        when(rateRepository
+                .findRateEntitiesByDateAndFromCurrencyAndToCurrency(LocalDate.now(), fromCurrency, toCurrency))
+                .thenReturn(Optional.empty()); // Return null to simulate repository not finding the entity
+
+        when(exchangeProvider.latestRate(fromCurrency, toCurrency)).thenReturn(mockedLatestRateDTO);
+
+        // Verify the result
+        assertThat(mockedLatestRateDTO.isSuccess()).isEqualTo(false);
+
+        assertThatThrownBy(() -> rateService.exchangeRate(fromCurrency, toCurrency))
+                .isInstanceOf(ExchangeNotFoundException.class)
+                .hasMessage("rest problem");
+
+
     }
 }

@@ -43,50 +43,28 @@ public class ExchangeController {
 
 
     @GetMapping("/api/convert")
-    public ResponseEntity<CurrencyConversionResponseDTO> currencyConversion(@RequestParam(name = "fromCurrency",required = false) String fromCurrency,
+    public ResponseEntity<TransactionResponseDTO> currencyConversion(@RequestParam(name = "fromCurrency",required = false) String fromCurrency,
                                                                             @RequestParam(name = "amount",required = false) BigDecimal amount,
                                                                             @RequestParam(name = "toCurrency",required = false) String toCurrency) {
         Validator.validCurrency(fromCurrency);
         Validator.validCurrency(toCurrency);
         Validator.validAmount(amount);
 
-        TransactionEntity response = exchangeService.currencyConversion(fromCurrency, amount, toCurrency);
-        return ResponseEntity.ok(CurrencyConversionResponseDTO.builder()
-                .id(response.getId())
-                .from(fromCurrency)
-                .amount(amount)
-                .to(toCurrency)
-                .result(response.getResult())
-                .build());
-
+       return ResponseEntity.ok(exchangeService.currencyConversion(fromCurrency, amount, toCurrency));
     }
 
     @GetMapping("/api/get/transaction")
     public ResponseEntity<TransactionResponseDTO> findTransactionById(@RequestBody TransactionRequestDTO request) {
-        Optional<TransactionEntity> transaction = exchangeService.findTransactionById(request.getTransactionId());
+        TransactionResponseDTO transaction = exchangeService.findTransactionById(request.getTransactionId());
 
-        if (transaction.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        TransactionEntity response = transaction.get();
-        return ResponseEntity.ok(TransactionResponseDTO.builder()
-                .id(response.getId())
-                .date(response.getDate())
-                .fromCurrency(response.getFromCurrency())
-                .amount(response.getAmount())
-                .toCurrency(response.getToCurrency())
-                .result(response.getResult())
-                .build());
+        return ResponseEntity.ok(transaction);
     }
 
     @GetMapping("/api/all-from-date")
     public ResponseEntity<List<TransactionResponseDTO>> findAllByDate(@RequestBody TransactionsByDateRequestDTO request) {
-        List<TransactionEntity> transactionEntities = exchangeService.getAllTransactionsByDate(request.getDate());
+        List<TransactionResponseDTO> transactionEntities = exchangeService.getAllTransactionsByDate(request.getDate());
 
-        List<TransactionResponseDTO> response =  transactionEntities.stream().map(e -> objectMapper.convertValue(e, TransactionResponseDTO.class))
-                .toList();
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(transactionEntities);
     }
 
 

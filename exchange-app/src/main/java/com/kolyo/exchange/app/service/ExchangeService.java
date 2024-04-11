@@ -1,20 +1,19 @@
 package com.kolyo.exchange.app.service;
 
+import com.kolyo.exchange.app.dto.TransactionResponseDTO;
 import com.kolyo.exchange.app.model.RateEntity;
-import com.kolyo.exchange.app.model.TransactionEntity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface ExchangeService {
 
     RateEntity exchangeRate(String fromCurrency, String toCurrency);
 
-    TransactionEntity currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency);
+    TransactionResponseDTO currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency);
 
-    Optional<TransactionEntity> findTransactionById(Long transactionId);
+    TransactionResponseDTO findTransactionById(Long transactionId);
 
-    List<TransactionEntity> getAllTransactionsByDate(LocalDate date);
+    List<TransactionResponseDTO> getAllTransactionsByDate(LocalDate date);
 }

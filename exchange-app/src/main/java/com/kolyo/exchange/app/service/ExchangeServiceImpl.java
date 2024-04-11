@@ -1,6 +1,11 @@
 package com.kolyo.exchange.app.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kolyo.exchange.app.dto.CurrencyConversionResponseDTO;
 import com.kolyo.exchange.app.dto.LatestRateDTO;
+import com.kolyo.exchange.app.dto.TransactionResponseDTO;
+import com.kolyo.exchange.app.exception.ExchangeNotFoundException;
+import com.kolyo.exchange.app.exception.TransactionNotFoundException;
 import com.kolyo.exchange.app.model.RateEntity;
 import com.kolyo.exchange.app.model.TransactionEntity;
 import com.kolyo.exchange.app.provider.ExchangeProvider;
@@ -23,6 +28,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     private ExchangeProvider exchangeProvider;
     private TransactionRepository transactionRepository;
     private RateRepository rateRepository;
+    private ObjectMapper objectMapper;
 
     @Override
     public RateEntity exchangeRate(String fromCurrency, String toCurrency) {
@@ -37,7 +43,7 @@ public class ExchangeServiceImpl implements ExchangeService {
         LatestRateDTO latestRateDTO = exchangeProvider.latestRate(fromCurrency, toCurrency);
 
         if (!latestRateDTO.isSuccess()) {
-            throw new RuntimeException("rest problem");
+            throw new ExchangeNotFoundException("rest problem");
         }
         RateEntity result = RateEntity.builder()
                 .fromCurrency(fromCurrency)
@@ -49,7 +55,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     @Override
-    public TransactionEntity currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency) {
+    public TransactionResponseDTO currencyConversion(String fromCurrency, BigDecimal amount, String toCurrency) {
 //        ConvertDTO convertDTO = exchangeProvider.convert(fromCurrency, amount, toCurrency);
 
         RateEntity rate = exchangeRate(fromCurrency,toCurrency);
@@ -64,17 +70,42 @@ public class ExchangeServiceImpl implements ExchangeService {
                 .build();
         transactionRepository.save(transactionEntity);
 
-        return transactionEntity;
+        return TransactionResponseDTO.builder()
+                .id(transactionEntity.getId())
+                .date(transactionEntity.getDate())
+                .fromCurrency(transactionEntity.getFromCurrency())
+                .amount(transactionEntity.getAmount())
+                .toCurrency(transactionEntity.getToCurrency())
+                .result(transactionEntity.getResult())
+                .build();
     }
 
     @Override
-    public Optional<TransactionEntity> findTransactionById(Long transactionId) {
-        return transactionRepository.findById(transactionId);
+    public TransactionResponseDTO findTransactionById(Long transactionId) {
+        Optional<TransactionEntity> entity = transactionRepository.findById(transactionId);
+
+        if (entity.isEmpty()) {
+            throw new TransactionNotFoundException("transaction with id " + transactionId + " not found");
+        }
+        return TransactionResponseDTO.builder()
+                .id(entity.get().getId())
+                .date(entity.get().getDate())
+                .fromCurrency(entity.get().getFromCurrency())
+                .amount(entity.get().getAmount())
+                .toCurrency(entity.get().getToCurrency())
+                .result(entity.get().getResult())
+                .build();
     }
 
     @Override
-    public List<TransactionEntity> getAllTransactionsByDate(LocalDate date) {
-        return transactionRepository.findAllByDate(date);
+    public List<TransactionResponseDTO> getAllTransactionsByDate(LocalDate date) {
+        List<TransactionEntity> transactionEntities = transactionRepository.findAllByDate(date);
+        if (transactionEntities.isEmpty()) {
+            throw new TransactionNotFoundException("transaction from date " + date.toString() + " not found");
+        }
+        return transactionEntities.stream()
+                .map(e -> objectMapper.convertValue(e, TransactionResponseDTO.class))
+                .toList();
     }
 
 }

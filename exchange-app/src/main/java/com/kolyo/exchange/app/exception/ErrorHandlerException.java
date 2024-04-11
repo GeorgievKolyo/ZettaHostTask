@@ -41,4 +41,12 @@ public class ErrorHandlerException extends ResponseEntityExceptionHandler {
         errorDTO.setStatus(HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(errorDTO,HttpStatus.NOT_FOUND );
     }
+
+    @ExceptionHandler(value = {RateLimitExceededException.class})
+    protected ResponseEntity<ErrorDTO> handleRateLimit(RateLimitExceededException ex) {
+        ErrorDTO errorDTO = new ErrorDTO();
+        errorDTO.setMessage("Rate limit: " + ex.getMessage());
+        errorDTO.setStatus(HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(errorDTO,HttpStatus.CONFLICT );
+    }
 }

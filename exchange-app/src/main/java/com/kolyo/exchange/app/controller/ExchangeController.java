@@ -1,6 +1,7 @@
 package com.kolyo.exchange.app.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kolyo.exchange.app.config.RateLimited;
 import com.kolyo.exchange.app.dto.*;
 import com.kolyo.exchange.app.model.RateEntity;
 import com.kolyo.exchange.app.service.ExchangeService;
@@ -28,6 +29,7 @@ public class ExchangeController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "Not found - The rate was not found")
     })
+    @RateLimited
     @GetMapping("/api/exchange-rate")
     public ResponseEntity<ExchangeRateResponseDTO> exchangeRate(@RequestParam(name = "fromCurrency",required = false) String fromCurrency,
                                                                 @RequestParam(name = "toCurrency",required = false) String toCurrency) {
@@ -53,6 +55,7 @@ public class ExchangeController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "Not found - The rate was not found")
     })
+    @RateLimited
     @PostMapping("/api/convert")
     public ResponseEntity<TransactionResponseDTO> currencyConversion(@RequestParam(name = "fromCurrency",required = false) String fromCurrency,
                                                                             @RequestParam(name = "amount",required = false) BigDecimal amount,
@@ -69,6 +72,7 @@ public class ExchangeController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "Not found - The transaction was not found")
     })
+    @RateLimited
     @GetMapping("/api/get/transaction")
     public ResponseEntity<TransactionResponseDTO> findTransactionById(@RequestBody TransactionRequestDTO request) {
         TransactionResponseDTO transaction = exchangeService.findTransactionById(request.getTransactionId());
@@ -81,6 +85,7 @@ public class ExchangeController {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved"),
             @ApiResponse(responseCode = "404", description = "Not found - The transaction was not found")
     })
+    @RateLimited
     @GetMapping("/api/all-from-date")
     public ResponseEntity<List<TransactionResponseDTO>> findAllByDate(@RequestBody TransactionsByDateRequestDTO request) {
         List<TransactionResponseDTO> transactionEntities = exchangeService.getAllTransactionsByDate(request.getDate());

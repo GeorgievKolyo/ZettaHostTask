@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Component
 public class RateLimitingAspect {
     private static final ConcurrentHashMap<String, AtomicInteger> requestCounts = new ConcurrentHashMap<>();
-    private static final int REQUEST_LIMIT = 2;
+    private static final int REQUEST_LIMIT = 100;
     private static final long TIME_LIMIT = 60000; // 1 minute
 
     @Before("@annotation(RateLimited)")

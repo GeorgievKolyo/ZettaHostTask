@@ -11,8 +11,14 @@ import com.kolyo.exchange.app.model.TransactionEntity;
 import com.kolyo.exchange.app.provider.ExchangeProvider;
 import com.kolyo.exchange.app.repository.RateRepository;
 import com.kolyo.exchange.app.repository.TransactionRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -21,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@CacheConfig(cacheNames = {"exchanges"})
 @AllArgsConstructor
 @Slf4j
 public class ExchangeServiceImpl implements ExchangeService {
@@ -30,6 +37,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     private RateRepository rateRepository;
     private ObjectMapper objectMapper;
 
+    @CachePut(key = "#result.id")
     @Override
     public RateEntity exchangeRate(String fromCurrency, String toCurrency) {
 
@@ -80,6 +88,7 @@ public class ExchangeServiceImpl implements ExchangeService {
                 .build();
     }
 
+    @CachePut(key = "#result.id")
     @Override
     public TransactionResponseDTO findTransactionById(Long transactionId) {
         Optional<TransactionEntity> entity = transactionRepository.findById(transactionId);
@@ -106,6 +115,13 @@ public class ExchangeServiceImpl implements ExchangeService {
         return transactionEntities.stream()
                 .map(e -> objectMapper.convertValue(e, TransactionResponseDTO.class))
                 .toList();
+    }
+
+    @CacheEvict(allEntries = true)
+    @PostConstruct
+    @Scheduled(fixedRateString = "${exchange-api.cache-ttl}")
+    public void clearCache(){
+        log.info("Caches are cleared");
     }
 
 }

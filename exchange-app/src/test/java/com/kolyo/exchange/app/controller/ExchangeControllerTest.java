@@ -1,7 +1,9 @@
 package com.kolyo.exchange.app.controller;
 
+import com.kolyo.exchange.app.dto.TransactionResponseDTO;
 import com.kolyo.exchange.app.exception.InvalidCurrencyException;
 import com.kolyo.exchange.app.model.RateEntity;
+import com.kolyo.exchange.app.model.TransactionEntity;
 import com.kolyo.exchange.app.service.ExchangeService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -95,43 +98,44 @@ public class ExchangeControllerTest {
     }
 
     //currencyConversion
-//    @Test
-//    public void currencyConversion() throws Exception {
-//
-//        TransactionEntity transaction = TransactionEntity.builder()
-//                .date(LocalDate.now())
-//                .fromCurrency("USD")
-//                .amount(BigDecimal.valueOf(100))
-//                .toCurrency("EUR")
-//                .result(BigDecimal.valueOf(89))
-//                .build();
-//
-//        // Mock the response from the ExchangeService
-//        TransactionResponseDTO responseDTO = TransactionResponseDTO.builder()
-//                .id(1L)
-//                .date(LocalDate.now())
-//                .fromCurrency("USD")
-//                .amount(BigDecimal.valueOf(100))
-//                .toCurrency("EUR")
-//                .result(BigDecimal.valueOf(89))
-//                .build();
-//
-//        when(exchangeService.currencyConversion("USD", BigDecimal.valueOf(100), "EUR"))
-//                .thenReturn(responseDTO);
-//
-//        // Perform the GET request
-//        mockMvc.perform(get("/api/convert")
-//                        .param("fromCurrency", "USD")
-//                        .param("amount", "100")
-//                        .param("toCurrency", "EUR"))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id", is(responseDTO.getId())))
-//                .andExpect(jsonPath("$.date", is(LocalDate.now().toString())))
-//                .andExpect(jsonPath("$.fromCurrency", is("USD")))
-//                .andExpect(jsonPath("$.amount", is(100.0)))
-//                .andExpect(jsonPath("$.toCurrency",is("EUR")))
-//                .andExpect(jsonPath("$.result", is(850)));
-//    }
+    @Test
+    public void currencyConversion() throws Exception {
+
+        TransactionEntity transaction = TransactionEntity.builder()
+                .date(LocalDate.now())
+                .fromCurrency("USD")
+                .amount(BigDecimal.valueOf(100))
+                .toCurrency("EUR")
+                .result(BigDecimal.valueOf(89))
+                .build();
+
+        // Mock the response from the ExchangeService
+        TransactionResponseDTO responseDTO = TransactionResponseDTO.builder()
+                .id(1L)
+                .date(LocalDate.now())
+                .fromCurrency("USD")
+                .amount(BigDecimal.valueOf(100.0))
+                .toCurrency("EUR")
+                .result(BigDecimal.valueOf(890))
+                .build();
+
+        when(exchangeService.currencyConversion("USD", BigDecimal.valueOf(100.0), "EUR"))
+                .thenReturn(responseDTO);
+
+
+        // Perform the GET request
+        mockMvc.perform(post("/api/convert")
+                        .param("fromCurrency", "USD")
+                        .param("amount", "100.0")
+                        .param("toCurrency", "EUR"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.date", is(LocalDate.now().toString())))
+                .andExpect(jsonPath("$.fromCurrency", is("USD")))
+                .andExpect(jsonPath("$.amount", is(100.0)))
+                .andExpect(jsonPath("$.toCurrency",is("EUR")))
+                .andExpect(jsonPath("$.result", is(890)));
+    }
 
 
 
